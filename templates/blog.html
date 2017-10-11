@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="/newpost">Add a Blog entry</a>
+
+
+
+
+<h1>Build a Blog</h1>
+
+<!--This page will receive the list of blogs from main.py-->
+<!--list of blogs should be displayed in this page-->
+{% if blogs|length == 0 %}
+    <p>No blogs</p>
+{% else %}
+    {% for blog in blogs %}
+        <h2>{{blog.title}}</h2>
+        <p>{{blog.body}}</p>
+    {% endfor %}
+{% endif %}
+
+
+{% endblock %}
