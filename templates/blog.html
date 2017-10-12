@@ -2,12 +2,13 @@
 
 {% block content %}
 
+<a href="/blog">Main Blog Page</a> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
 <a href="/newpost">Add a Blog entry</a>
 
 
 
 
-<h1>Build a Blog</h1>
+<h1 align=center>Build a Blog</h1>
 
 <!--This page will receive the list of blogs from main.py-->
 <!--list of blogs should be displayed in this page-->
@@ -15,7 +16,8 @@
     <p>No blogs</p>
 {% else %}
     {% for blog in blogs %}
-        <h2>{{blog.title}}</h2>
+        
+        <h2><a href="/blog?id={{ blog.id }}">{{blog.title}}</a></h2>
         <p>{{blog.body}}</p>
     {% endfor %}
 {% endif %}
