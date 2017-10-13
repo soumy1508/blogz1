@@ -67,7 +67,7 @@ def newpost():
         bodyerror = request.args.get("bodyerror")
         return render_template('newpost.html',
                                 titleerror=titleerror and cgi.escape(titleerror, quote=True),
-                                bodyerror=bodyerror and cgi.escape(bodyerror, quote=True) )
+                                bodyerror=bodyerror and cgi.escape(bodyerror, quote=True))
 
 
 if __name__ == '__main__':
