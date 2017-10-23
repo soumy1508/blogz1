@@ -34,28 +34,46 @@ class User(db.Model):
         
 @app.route('/', methods=['GET'])
 def userindex():    
-        return render_template('index.html')
+        listofusers = User.query.all()        
+        return render_template('index.html',users=listofusers)
+
+
+
 
 @app.route('/login', methods=['POST','GET'])
 def userlogin():
     if request.method == 'POST':         
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username=username).first()
-        if user and user.password == password:
-            session['username'] = username
-            flash("Logged in")
-            return render_template('newpost.html', titleerror="", bodyerror="")
-        else:
-            flash('User password incorrect, or user does not exist', 'error')
-    elif request.method == 'GET':   
-        return render_template('login.html')
+        
+        _usernameerror = ""
+        _passworderror = ""
+
+        if (not username) or (username.strip() == ""):
+            _usernameerror = "Please enter username"
+
+        if (not password) or (password.strip() == ""):
+            _passworderror = "Please enter passwd"
+
+        if _usernameerror or _passworderror:
+            return render_template('login.html', usernameerror=_usernameerror, passworderror=_passworderror)
+        else:        
+            user = User.query.filter_by(username=username).first()
+            if user and user.password == password:
+                session['username'] = username
+                flash("Logged in")
+                return render_template('newpost.html', titleerror="", bodyerror="")
+            else:
+                flash('User password incorrect, or user does not exist', 'error')
+
+
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     del session['username']
     print(session)
-    return redirect('/')
+    return redirect('/blog')
 
 @app.route('/signup', methods=['POST', 'GET'])
 def usersignup():
@@ -77,6 +95,12 @@ def usersignup():
 
         if (not verify) or (verify.strip() == ""):
             _verifyerror = "Please verify passwd"
+
+        if (len(username) < 3):
+            _usernameerror = "Invalid username"
+        
+        if (len(password) < 3):
+            _passworderror = "Invalid password"
 
 
         if _usernameerror or _passworderror or _verifyerror:
@@ -100,6 +124,15 @@ def usersignup():
 
     elif request.method == 'GET':
         return render_template('signup.html')
+
+
+
+@app.route('/singluser', methods=['GET'])
+def singleuserdata(): 
+    clickuserid = request.args.get("id")
+    clickeduserobject = User.query.filter_by(id=int(clickuserid)).first()
+    singleuserblogs = Blog.query.filter_by(owner=clickeduserobject).all()
+    return render_template('singleUser.html', userblogs=singleuserblogs)
 
 
 @app.route('/blog', methods=['GET'])
@@ -136,8 +169,10 @@ def newpost():
             bodyerrormessage = "Please enter body"
         
         if titleerrormessage or bodyerrormessage:
-            # go to page and display the error message
-            return redirect("/newpost?titleerror=" + titleerrormessage + "&bodyerror=" + bodyerrormessage)
+            # go to page and display the error message            
+            return render_template('newpost.html',
+                                titleerror=titleerrormessage and cgi.escape(titleerrormessage, quote=True),
+                                bodyerror=bodyerrormessage and cgi.escape(bodyerrormessage, quote=True))
         else:
 
             owner = User.query.filter_by(username=session['username']).first()
@@ -147,12 +182,11 @@ def newpost():
             db.session.commit()
             return redirect("/blog?id=" + str(newBlog.id))            
             #return redirect('/blog')
-    else:
-        titleerror = request.args.get("titleerror")
-        bodyerror = request.args.get("bodyerror")
-        return render_template('newpost.html',
-                                titleerror=titleerror and cgi.escape(titleerror, quote=True),
-                                bodyerror=bodyerror and cgi.escape(bodyerror, quote=True))
+    else:        
+        if 'username' not in session:
+            return redirect('/login')
+        else:
+            return render_template('newpost.html')
 
 
 if __name__ == '__main__':

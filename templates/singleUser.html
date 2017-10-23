@@ -2,5 +2,18 @@
 
 {% block content %}
 
+<h1 align=center>User Blogs</h1>
+
+<!--This page will receive the list of blogs from main.py-->
+<!--list of blogs should be displayed in this page-->
+{% if userblogs|length == 0 %}
+    <p>No blogs</p>
+{% else %}
+    {% for blog in userblogs %}
+        
+        <h2><a href="/blog?id={{ blog.id }}">{{blog.title}}</a></h2>
+        <p>{{blog.body}}</p>
+    {% endfor %}
+{% endif %}
 
 {% endblock %}

@@ -2,7 +2,22 @@
 
 {% block content %}
 
-<a href="/login">login</a>
-<a href="/logout">logout</a>
+<h1 align=center>blog users!</h1>
+
+<!--This page will receive the list of blogs from main.py-->
+<!--list of blogs should be displayed in this page-->
+{% if users|length == 0 %}
+    <p>No users</p>
+{% else %}
+    {% for user in users %}
+        
+        <!--<h2>{{user.username}}</a></h2>-->
+        <!--to make it clickable we add href and pass the id-->
+        <h2><a href="/singluser?id={{ user.id }}">{{user.username}}</a></h2>
+        
+    {% endfor %}
+{% endif %}
+
+
 
 {% endblock %}
