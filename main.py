@@ -102,6 +102,9 @@ def usersignup():
         if (len(password) < 3):
             _passworderror = "Invalid password"
 
+        if (password != verify):
+           _verifyerror = "Passwords dont match"
+
 
         if _usernameerror or _passworderror or _verifyerror:
                 return render_template('signup.html',
